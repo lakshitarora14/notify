@@ -15,7 +15,5 @@ public class UserFcm {
     private String FacebookApp;
     private String QuoraApp;
     private String QuizApp;
-    private String FacebookWeb;
-    private String QuoraWeb;
 
 }

@@ -7,6 +7,8 @@ import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Notification;
+import com.server.notification.client.LoginClient;
+import com.server.notification.dto.NotificationDTO;
 import com.server.notification.dto.SendDto;
 import com.server.notification.entity.UserFcm;
 import com.server.notification.firebase.FCMService;
@@ -15,7 +17,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -25,6 +29,8 @@ public class PushNotificationServiceImpl implements PushNotificationService{
     @Autowired
     private static FcmRepo userFcmService;
 
+    @Autowired
+    private static LoginClient loginClient;
 
 
 
@@ -37,50 +43,14 @@ public class PushNotificationServiceImpl implements PushNotificationService{
         List<String> uidList = sendDto.getUidList();
 
 
-
-        List<String> registrationTokens = Arrays.asList();
-        if(sendDto.getPlatform() == "FacebookApp")
-        {
-            List<UserFcm> userFcms=userFcmService.findAllByUserIdIn(uidList);
-            for(int i=0;i<userFcms.size();i++)
-            {
-                registrationTokens.add(userFcms.get(i).getFacebookApp());
-            }
-        }
-        else if(sendDto.getPlatform() == "FacebookWeb")
-        {
-            List<UserFcm> userFcms=userFcmService.findAllByUserIdIn(uidList);
-            for(int i=0;i<userFcms.size();i++)
-            {
-                registrationTokens.add(userFcms.get(i).getFacebookWeb());
-            }
-        }
-        else if(sendDto.getPlatform() == "QuoraApp")
-        {
-            List<UserFcm> userFcms=userFcmService.findAllByUserIdIn(uidList);
-            for(int i=0;i<userFcms.size();i++)
-            {
-                registrationTokens.add(userFcms.get(i).getQuoraApp());
-            }
-        }
-        else if(sendDto.getPlatform() == "QuoraWeb")
-        {
-            List<UserFcm> userFcms=userFcmService.findAllByUserIdIn(uidList);
-            for(int i=0;i<userFcms.size();i++)
-            {
-                registrationTokens.add(userFcms.get(i).getQuoraWeb());
-            }
-        }
-        else if(sendDto.getPlatform() == "QuizApp")
-        {
-            List<UserFcm> userFcms=userFcmService.findAllByUserIdIn(uidList);
-            for(int i=0;i<userFcms.size();i++)
-            {
-                registrationTokens.add(userFcms.get(i).getQuizApp());
-            }
-        }
-
-        MulticastMessage message = MulticastMessage.builder()
+    String channel = sendDto.getPlatform();
+//        List<String> registrationTokens = new ArrayList<>();
+        NotificationDTO notificationDTO = new NotificationDTO();
+        notificationDTO.setUserId(sendDto.getUidList());
+        notificationDTO.setChannel(sendDto.getPlatform());
+        List<String> registrationTokens = loginClient.getFcmToken(notificationDTO);
+        registrationTokens.add("fHthvKtivAw:APA91bHY5tMWQ9Zg1MZB2JJ5C42q_OcM3j2ikYLlqHt9xT_QyL40QVday3rkQOJLUpLr3OdAiTvhQfp0TeEcDuBe5xcgK1wubghi3cqT7ryBCQA0BG5JrfwLk13_DwCbnaATHsngOS09");
+            MulticastMessage message = MulticastMessage.builder()
                 .addAllTokens(registrationTokens)
                 .setNotification(new Notification(sendDto.getTitle(), sendDto.getMessage()))
                 .build();
@@ -90,11 +60,13 @@ public class PushNotificationServiceImpl implements PushNotificationService{
                 .sendMulticastAsync(message), new ApiFutureCallback<BatchResponse>() {
             @Override
             public void onFailure(Throwable throwable) {
+
                 logger.error("Error occured while sending the notification");
             }
 
             @Override
             public void onSuccess(BatchResponse batchResponse) {
+
                 logger.info("Sent notification to all devices");
             }
         }, MoreExecutors.newDirectExecutorService());

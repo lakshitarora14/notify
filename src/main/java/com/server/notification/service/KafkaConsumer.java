@@ -23,8 +23,8 @@ public class KafkaConsumer  {
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @KafkaListener(topics = "notif1")
-    public SendDto data(String NotifData) throws IOException, FirebaseMessagingException {
+    @KafkaListener(topics = "quiztopic")
+    public SendDto data(String NotifData) throws IOException, FirebaseMessagingException{
         ObjectMapper objectMapper = new ObjectMapper();
         SendDto sendDto = new SendDto();
         sendDto = objectMapper.readValue(NotifData,SendDto.class);
