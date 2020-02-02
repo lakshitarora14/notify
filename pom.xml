@@ -85,12 +85,22 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.cloud</groupId>-->
+			<!--<artifactId>spring-cloud-starter-feign</artifactId>-->
+			<!--<version>1.4.7.RELEASE</version>-->
+		<!--</dependency>-->
+		<!--<dependency>-->
+			<!--<groupId>org.springframework.cloud</groupId>-->
+			<!--<artifactId>spring-cloud-starter-openfeign</artifactId>-->
+		<!--</dependency>-->
 		<dependency>
 			<groupId>com.google.firebase</groupId>
 			<artifactId>firebase-admin</artifactId>
 			<version>6.8.1</version>
 		</dependency>
+
+
 
 		<dependency>
 			<groupId>org.projectlombok</groupId>

@@ -27,10 +27,10 @@ import java.util.List;
 public class PushNotificationServiceImpl implements PushNotificationService{
 
     @Autowired
-    private static FcmRepo userFcmService;
+    private FcmRepo userFcmService;
 
     @Autowired
-    private static LoginClient loginClient;
+    private  LoginClient loginClient;
 
 
 
@@ -39,18 +39,20 @@ public class PushNotificationServiceImpl implements PushNotificationService{
     private FCMService fcmService;
     public PushNotificationServiceImpl(FCMService fcmService){this.fcmService = fcmService;}
 
-    public static void sendCustom(SendDto sendDto) {
+    public void sendCustom(SendDto sendDto) {
         List<String> uidList = sendDto.getUidList();
+        String channel = sendDto.getPlatform();
 
-
-    String channel = sendDto.getPlatform();
-//        List<String> registrationTokens = new ArrayList<>();
+        System.out.println("Inside SendCuston" + uidList.size());
+        System.out.println("Inside SendCuston"+channel);
         NotificationDTO notificationDTO = new NotificationDTO();
         notificationDTO.setUserId(sendDto.getUidList());
         notificationDTO.setChannel(sendDto.getPlatform());
-        List<String> registrationTokens = loginClient.getFcmToken(notificationDTO);
-        registrationTokens.add("fHthvKtivAw:APA91bHY5tMWQ9Zg1MZB2JJ5C42q_OcM3j2ikYLlqHt9xT_QyL40QVday3rkQOJLUpLr3OdAiTvhQfp0TeEcDuBe5xcgK1wubghi3cqT7ryBCQA0BG5JrfwLk13_DwCbnaATHsngOS09");
-            MulticastMessage message = MulticastMessage.builder()
+//        List<String> registrationTokens = loginClient.getFcmToken(notificationDTO);
+        List<String> registrationTokens = new ArrayList<>();
+        registrationTokens.add("d4vujCd91HU:APA91bG0knAW3Dla4yHI62Bzej5S-uJL8DCatt4lO3UWRnI9_BraYjriZgBjVzQdVrcbIyRMIYLdzppzHBIrZ9runPqxUVKNuMd3OR_wSmaMqEjXdbCfhv4hGJTLUmn6YNogc1VgioMF\n" +
+               "");
+        MulticastMessage message = MulticastMessage.builder()
                 .addAllTokens(registrationTokens)
                 .setNotification(new Notification(sendDto.getTitle(), sendDto.getMessage()))
                 .build();

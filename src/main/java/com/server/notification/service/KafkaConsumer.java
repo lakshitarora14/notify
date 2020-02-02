@@ -19,16 +19,19 @@ public class KafkaConsumer  {
     @Autowired
     FcmRepo fcmRepo;
 
+    @Autowired
+    PushNotificationService pushNotificationService;
 
     @Autowired
     private JavaMailSender javaMailSender;
 
-    @KafkaListener(topics = "quiztopic")
+    @KafkaListener(topics = "notif1")
     public SendDto data(String NotifData) throws IOException, FirebaseMessagingException{
         ObjectMapper objectMapper = new ObjectMapper();
-        SendDto sendDto = new SendDto();
+        SendDto sendDto;;
         sendDto = objectMapper.readValue(NotifData,SendDto.class);
-        PushNotificationServiceImpl.sendCustom(sendDto);
+        System.out.println(sendDto.toString());
+        pushNotificationService.sendCustom(sendDto);
         System.out.println(sendDto);
         return sendDto;
     }
@@ -38,8 +41,6 @@ public class KafkaConsumer  {
         CrmDto crmDto = new CrmDto();
         crmDto = objectMapper.readValue(maildata,CrmDto.class);
         System.out.println(crmDto);
-
-
         SimpleMailMessage msg = new SimpleMailMessage();
         msg.setTo(crmDto.getUserEmail());
         msg.setSubject("Reminder");
