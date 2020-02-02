@@ -14,5 +14,7 @@ public class SendDto {
     private String message;
     private String platform;
     private List<String> uidList;
+    private String jsonData;
+//    private String key;
 //    private Map<String,String> data;
 }

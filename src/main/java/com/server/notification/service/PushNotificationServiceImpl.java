@@ -3,10 +3,7 @@ package com.server.notification.service;
 import com.google.api.core.ApiFutureCallback;
 import com.google.api.core.ApiFutures;
 import com.google.common.util.concurrent.MoreExecutors;
-import com.google.firebase.messaging.BatchResponse;
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.MulticastMessage;
-import com.google.firebase.messaging.Notification;
+import com.google.firebase.messaging.*;
 import com.server.notification.client.LoginClient;
 import com.server.notification.dto.NotificationDTO;
 import com.server.notification.dto.SendDto;
@@ -39,7 +36,7 @@ public class PushNotificationServiceImpl implements PushNotificationService{
     private FCMService fcmService;
     public PushNotificationServiceImpl(FCMService fcmService){this.fcmService = fcmService;}
 
-    public void sendCustom(SendDto sendDto) {
+    public void sendCustom(SendDto sendDto) throws FirebaseMessagingException {
         List<String> uidList = sendDto.getUidList();
         String channel = sendDto.getPlatform();
 
@@ -48,15 +45,19 @@ public class PushNotificationServiceImpl implements PushNotificationService{
         NotificationDTO notificationDTO = new NotificationDTO();
         notificationDTO.setUserId(sendDto.getUidList());
         notificationDTO.setChannel(sendDto.getPlatform());
+        System.out.println("data to be sent =========== "+sendDto);
+        System.out.println("data in notification "+ notificationDTO);
 //        List<String> registrationTokens = loginClient.getFcmToken(notificationDTO);
         List<String> registrationTokens = new ArrayList<>();
-        registrationTokens.add("d4vujCd91HU:APA91bG0knAW3Dla4yHI62Bzej5S-uJL8DCatt4lO3UWRnI9_BraYjriZgBjVzQdVrcbIyRMIYLdzppzHBIrZ9runPqxUVKNuMd3OR_wSmaMqEjXdbCfhv4hGJTLUmn6YNogc1VgioMF\n" +
-               "");
+        registrationTokens.add("d4vujCd91HU:APA91bG0knAW3Dla4yHI62Bzej5S-uJL8DCatt4lO3UWRnI9_BraYjriZgBjVzQdVrcbIyRMIYLdzppzHBIrZ9runPqxUVKNuMd3OR_wSmaMqEjXdbCfhv4hGJTLUmn6YNogc1VgioMF");
         MulticastMessage message = MulticastMessage.builder()
                 .addAllTokens(registrationTokens)
                 .setNotification(new Notification(sendDto.getTitle(), sendDto.getMessage()))
+                .putData("lakshit",sendDto.getJsonData())
                 .build();
-        BatchResponse response = null;
+//        BatchResponse response = null;
+        BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(message);
+
         ApiFutures.addCallback(FirebaseMessaging
                 .getInstance()
                 .sendMulticastAsync(message), new ApiFutureCallback<BatchResponse>() {
@@ -72,6 +73,8 @@ public class PushNotificationServiceImpl implements PushNotificationService{
                 logger.info("Sent notification to all devices");
             }
         }, MoreExecutors.newDirectExecutorService());
+
+        System.out.println(response.getSuccessCount() + " messages were sent successfully");
 
     }
 
