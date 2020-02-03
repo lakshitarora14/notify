@@ -45,11 +45,12 @@ public class PushNotificationServiceImpl implements PushNotificationService{
         NotificationDTO notificationDTO = new NotificationDTO();
         notificationDTO.setUserId(sendDto.getUidList());
         notificationDTO.setChannel(sendDto.getPlatform());
-        System.out.println("data to be sent =========== "+sendDto);
-        System.out.println("data in notification "+ notificationDTO);
-//        List<String> registrationTokens = loginClient.getFcmToken(notificationDTO);
-        List<String> registrationTokens = new ArrayList<>();
-        registrationTokens.add("d4vujCd91HU:APA91bG0knAW3Dla4yHI62Bzej5S-uJL8DCatt4lO3UWRnI9_BraYjriZgBjVzQdVrcbIyRMIYLdzppzHBIrZ9runPqxUVKNuMd3OR_wSmaMqEjXdbCfhv4hGJTLUmn6YNogc1VgioMF");
+        List<String> registrationTokens = loginClient.getFcmToken(notificationDTO);
+        System.out.println("=================No of registration tokens==============" + registrationTokens.size());
+
+//        List<String> registrationTokens = new ArrayList<>();
+//        registrationTokens.add("etNB0C3y1go:APA91bHR7HWmw0QuWDl7r0-NCXNfXWl4-TV6WNEAK_LP4iXiluEUUVjHdONxpV5zxRK3p3cFWRJVNnc-zez9Wryl7FYVrnUijy7NqYo82FuIuEEyhgFC5rjmJGZ5kRJUmh0JWw1OlQei");
+
         MulticastMessage message = MulticastMessage.builder()
                 .addAllTokens(registrationTokens)
                 .setNotification(new Notification(sendDto.getTitle(), sendDto.getMessage()))
