@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.server.notification.dto.CrmDto;
 import com.server.notification.dto.SendDto;
+//import com.server.notification.dto.TopicDto;
 import com.server.notification.repository.FcmRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -28,7 +29,7 @@ public class KafkaConsumer  {
     @KafkaListener(topics = "notif1")
     public SendDto data(String NotifData) throws IOException, FirebaseMessagingException{
         ObjectMapper objectMapper = new ObjectMapper();
-        SendDto sendDto;;
+        SendDto sendDto;
         sendDto = objectMapper.readValue(NotifData,SendDto.class);
         System.out.println(sendDto.toString());
         pushNotificationService.sendCustom(sendDto);
@@ -50,4 +51,16 @@ public class KafkaConsumer  {
         System.out.println(crmDto);
         return crmDto;
     }
+
+//    @KafkaListener(topics = "topic1")
+//    public TopicDto data1(String NotifData) throws IOException, FirebaseMessagingException{
+//        ObjectMapper objectMapper = new ObjectMapper();
+//        TopicDto topicDto;
+//        topicDto = objectMapper.readValue(NotifData,TopicDto.class);
+//        System.out.println(topicDto.toString());
+//        pushNotificationService.sendTopic(topicDto);
+//        System.out.println(topicDto);
+//        return topicDto;
+//    }
+
 }
